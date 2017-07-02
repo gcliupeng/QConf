@@ -56,6 +56,7 @@ execute_process(WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/../deps/curl COMMAND
 #build libgdbm
 execute_process(WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/../deps/gdbm COMMAND ./configure
     --prefix=${PROJECT_SOURCE_DIR}/../deps/gdbm/_install)
+execute_process(WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/../deps/gdbm COMMAND autoreconf -ivf)
 execute_process(WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/../deps/gdbm COMMAND
     make)
 execute_process(WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/../deps/gdbm COMMAND
