@@ -39,7 +39,7 @@ int main(int argc, char **arg)
     agent_dir = STRING(QCONF_AGENT_DIR);
 #endif
 
-    qconf_set_log_level(QCONF_LOG_ERR);
+    qconf_set_log_level(QCONF_LOG_INFO);
     LOG_INFO("agent_dir:%s", agent_dir.c_str());
 
     // check whether agent is running
