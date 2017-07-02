@@ -88,10 +88,16 @@ static void signal_forward(int sig)
 int check_proc_exist(const string &pid_file, int &pid_fd)
 {
     pid_fd = open(pid_file.c_str(), O_RDWR | O_TRUNC | O_CREAT, 0644);
-    if (-1 == pid_fd) return QCONF_ERR_OPEN;
+    if (-1 == pid_fd) {
+        LOG_FATAL_ERR("can't open the pid file %s",pid_file.c_str());
+        return QCONF_ERR_OPEN;
+    };
 
     int ret = lockf(pid_fd, F_TLOCK, 0);
-    if (-1 == ret) return QCONF_ERR_LOCK;
+    if (-1 == ret) {
+        LOG_FATAL_ERR("the pid file %s is locked ",pid_file.c_str());
+        return QCONF_ERR_LOCK;
+    }
 
     return QCONF_OK;
 }
