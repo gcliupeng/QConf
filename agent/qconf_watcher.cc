@@ -320,9 +320,9 @@ static void *assist_watcher_process(void *p)
 
     while (!_stop_watcher_setting)
     {
-        msleep_interval(interval);
         if (_stop_watcher_setting) break;
         process_tbl();
+        msleep_interval(interval);
     }
     pthread_exit(NULL);
 }
@@ -538,6 +538,11 @@ static int set_watcher_and_update_tbl(const string &tblkey)
     string idc, path, gray_value;
     int ret = QCONF_ERR_OTHER;
     char data_type = QCONF_DATA_TYPE_UNKNOWN;
+    //add by liupeng
+    if(tblkey == QCONF_STOP_MSG){
+        return QCONF_OK;
+    }
+
     // If the node is gray nodes
     if (is_gray_node(tblkey, gray_value))
     {
@@ -607,10 +612,20 @@ static int process_node(zhandle_t *zh, const string &tblkey, const string &path)
             add_change_trigger_node(tblkey, tblval, QCONF_TRIGGER_TYPE_ADD_OR_MODIFY);
         }
         ret = (QCONF_ERR_SAME_VALUE == ret) ? QCONF_OK : ret;
+        //add by liupeng add log
+        LOG_ERR("get the node from zk ok, path:%s , value:%s",path.c_str(), val.c_str());
         return ret;
     case QCONF_NODE_NOT_EXIST:
+        //add by liupeng
+        if(hash_tbl_exist(_shm_tbl, tblkey) ){
+            LOG_ERR("delete the node from zk ok, path:%s ",path.c_str());
+        } else{
+            LOG_ERR("client require the node ,but it don't exist in the zk !!, path:%s ",path.c_str());
+            zk_exists(zh,path);
+        }
         ret = hash_tbl_remove(_shm_tbl, tblkey);
         add_change_trigger_node(tblkey, tblval, QCONF_TRIGGER_TYPE_REMOVE);
+
         return ret;
     default:
         LOG_ERR("Failed to get node value! path:%s", path.c_str());
@@ -880,6 +895,10 @@ static void process_created_event(const string &idc, const string &path)
 {
     // There is no need operation for created event
     // For it is user's duty to decide to get the nodes
+    //add by liupeng
+    string tblkey;
+    serialize_to_tblkey(QCONF_DATA_TYPE_NODE, idc, path, tblkey);
+    add_watcher_node(tblkey);
 }
 
 /**
