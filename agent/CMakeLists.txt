@@ -72,6 +72,12 @@ target_link_libraries(qconf_agent
 target_link_libraries(qconf_agent ${PROJECT_SOURCE_DIR}/../deps/gdbm/_install/lib/libgdbm.a)
 file(WRITE lockfile "")
 
+#修改线下配置
+IF(${CMAKE_BUILD_TYPE} STREQUAL "debug")
+execute_process(WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/conf COMMAND 
+    echo test OUTPUT_FILE localidc)
+ENDIF()
+
 install(DIRECTORY bin DESTINATION .)
 install(DIRECTORY conf DESTINATION .)
 install(DIRECTORY script DESTINATION .)
