@@ -550,6 +550,8 @@ static int set_watcher_and_update_tbl(const string &tblkey)
         if (QCONF_OK == ret)
         {
             add_change_trigger_node(tblkey, gray_value, QCONF_TRIGGER_TYPE_ADD_OR_MODIFY);
+            //add log
+
         }
         if (QCONF_OK != ret && QCONF_ERR_SAME_VALUE != ret)
         {
@@ -898,7 +900,9 @@ static void process_created_event(const string &idc, const string &path)
     //add by liupeng
     string tblkey;
     serialize_to_tblkey(QCONF_DATA_TYPE_NODE, idc, path, tblkey);
-    add_watcher_node(tblkey);
+    if (pending_node_exist(tblkey) || hash_tbl_exist(_shm_tbl, tblkey)){
+        add_watcher_node(tblkey);
+    }
 }
 
 /**
