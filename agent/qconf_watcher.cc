@@ -261,6 +261,9 @@ int watcher_setting_start()
     int ret = 0;
     pthread_t assist_watcher_thread, msg_thread, change_trigger_thread, gray_thread;
 
+    //add by liupeng, 启动时就建立跟zk的连接
+    get_zhandle_by_idc(_local_idc);
+
     // Assist watcher thread, scan share tbl regularly
     ret = pthread_create(&assist_watcher_thread, NULL, assist_watcher_process, NULL);
     if (0 != ret)
