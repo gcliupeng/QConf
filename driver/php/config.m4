@@ -19,6 +19,8 @@ if test -z "$PHP_DEBUG"; then
   ])
 fi
 
+PHP_ADD_LIBRARY_WITH_PATH(qconf, /usr/local/lib, QCONF_SHARED_LIBADD)
+
 if test "$PHP_QCONF" != "no"; then
  
    if test "$PHP_LIBQCONF_DIR" != "no" && test "$PHP_LIBQCONF_DIR" != "yes"; then
@@ -44,10 +46,10 @@ if test "$PHP_QCONF" != "no"; then
 dnl    PHP_LIBQCONF_INCDIR="/usr/local/include/qconf"
     PHP_ADD_INCLUDE($PHP_LIBQCONF_INCDIR)
 
+    PHP_SUBST(QCONF_SHARED_LIBADD)
     PHP_REQUIRE_CXX()
     PHP_ADD_LIBRARY(stdc++, "", EXTRA_LDFLAGS)
     PHP_NEW_EXTENSION(qconf, php_qconf.c $SESSION_EXTRA_FILES, $ext_shared)
 
 dnl  fi
-
 fi
