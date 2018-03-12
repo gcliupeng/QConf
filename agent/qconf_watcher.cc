@@ -849,7 +849,22 @@ static void init_env_for_zk(zhandle_t *zh, const string &idc_host, const string 
     if(state != CONNECTED_STATE_DEF){
         return;
     }
-
+    // add auth 
+    string auth_k("zookeeper_digest.");
+    auth_k += idc ;
+    string auth_v;
+    get_agent_conf(auth_k,auth_v);
+    if(auth_v.empty()){
+         LOG_ERR("Failed to find in idc: %s 's passwd.",idc.c_str());
+         return;
+    }else{
+        state = zoo_add_auth(zh,"digest",auth_v.c_str(),auth_v.length(),NULL,NULL);
+        if(state != 0){
+            LOG_ERR("Failed to auth zk for idc: %s .",idc.c_str());
+            return;
+        }
+    }
+    
     // Reregister Current Host on Zookeeper host
     zk_register_ephemeral(zh, _register_node_path, QCONF_AGENT_VERSION);
 
