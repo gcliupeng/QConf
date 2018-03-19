@@ -21,6 +21,38 @@ using namespace std;
 static CURL *_curl;
 static string _feedback_buf;
 
+/*
+*   以下两个函数为了urlencode使用
+*/
+static unsigned char toHex(unsigned char x) 
+{ 
+    return  x > 9 ? x + 55 : x + 48; 
+}
+
+static string urlEncode(const string& str)
+{
+    string strTemp = "";
+    size_t length = str.length();
+    for (size_t i = 0; i < length; i++)
+    {
+        if (isalnum((unsigned char)str[i]) || 
+            (str[i] == '-') ||
+            (str[i] == '_') || 
+            (str[i] == '.') || 
+            (str[i] == '~'))
+            strTemp += str[i];
+        else if (str[i] == ' ')
+            strTemp += "+";
+        else
+        {
+            strTemp += '%';
+            strTemp += toHex((unsigned char)str[i] >> 4);
+            strTemp += toHex((unsigned char)str[i] % 16);
+        }
+    }
+    return strTemp;
+}
+
 static int write_callback(void *buffer, size_t size, size_t nmemb, void *userp);
 
 int qconf_init_feedback(const string &url)
@@ -115,7 +147,7 @@ int feedback_generate_content(const string &ip, char data_type, const string &id
 
     stringstream ss;
     ss << "hostname=" << hostname << "&ip=" << ip << "&node_whole=" << path;
-    ss << "&value_md5=" << value_md5_str << "&value=" <<value << "&idc=" << idc;
+    ss << "&value_md5=" << value_md5_str << "&value=" <<urlEncode(value) << "&idc=" << idc;
     ss << "&update_time=" << time(NULL) << "&data_type=" << data_type;
     ss >> content;
 
