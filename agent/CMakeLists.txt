@@ -29,7 +29,10 @@ set_source_files_properties(../base/qlibc/qhasharr.c PROPERTIES LANGUAGE CXX )
 
 add_definitions(${AGENT_COMPILE_FLAGS})
 add_executable(qconf_agent ${DIR_SRCS})
-
+aux_source_directory(../base DIR_SRC_DUMP)
+aux_source_directory(../base/qlibc DIR_SRC_DUMP)
+aux_source_directory(./gdbm_dump DIR_SRC_DUMP)
+add_executable(gdbm_dump ${DIR_SRC_DUMP})
 # link libpthread
 find_package (Threads)
 target_link_libraries (qconf_agent ${CMAKE_THREAD_LIBS_INIT})
@@ -70,6 +73,7 @@ target_link_libraries(qconf_agent
     ${PROJECT_SOURCE_DIR}/../deps/zookeeper/_install/lib/libzookeeper_mt.a)
 # link static libgdbm
 target_link_libraries(qconf_agent ${PROJECT_SOURCE_DIR}/../deps/gdbm/_install/lib/libgdbm.a)
+target_link_libraries(gdbm_dump ${PROJECT_SOURCE_DIR}/../deps/gdbm/_install/lib/libgdbm.a)
 file(WRITE lockfile "")
 
 #修改线下配置
@@ -90,4 +94,5 @@ install(FILES lockfile DESTINATION lock)
 install(DIRECTORY DESTINATION doc)
 install(DIRECTORY DESTINATION logs)
 install(TARGETS qconf_agent DESTINATION bin)
+install(TARGETS gdbm_dump DESTINATION bin)
 install(FILES version DESTINATION .)
