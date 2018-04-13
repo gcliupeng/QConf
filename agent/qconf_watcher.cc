@@ -171,7 +171,7 @@ static void lock_ht_keys(const map<K, V> &ht, Mutex &mu, vector<K> &idcs)
 
 int qconf_init_shm_tbl()
 {
-    int ret = create_hash_tbl(_shm_tbl, QCONF_DEFAULT_SHM_KEY, 0644);
+    int ret = create_hash_tbl(_shm_tbl, QCONF_DEFAULT_SHM_KEY, 0600);
     if (ret == QCONF_OK) {
         bool initRet = LRU::getInstance()->initLruMem(_shm_tbl);
         if (!initRet) {
